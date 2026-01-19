@@ -18,14 +18,12 @@ class OllamaEmbeddingClientIT {
 
     @Test
     void embed_shouldReturnRealEmbeddingFromOllama() {
-        // ---- when ----
+
         List<Double> embedding = embeddingClient.embed("Hello Ollama");
 
-        // ---- then ----
         assertNotNull(embedding, "Embedding should not be null");
         assertFalse(embedding.isEmpty(), "Embedding should not be empty");
 
-        // nomic-embed-text is 768 dims (sanity check, not hard guarantee)
         assertTrue(
                 embedding.size() > 100,
                 "Embedding dimension looks incorrect"

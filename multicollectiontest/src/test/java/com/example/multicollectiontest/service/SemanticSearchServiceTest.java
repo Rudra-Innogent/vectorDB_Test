@@ -31,13 +31,11 @@ class SemanticSearchServiceTest {
     SemanticSearchService service;
 
     @BeforeEach
-    void setUp() {
-        // Mockito handles everything, nothing needed here
-    }
+    void setUp() {}
 
     @Test
     void search_shouldReturnProductResults_whenUsersExist() {
-        // ---- given ----
+
         List<Double> embedding = List.of(0.1, 0.2, 0.3);
         when(embeddingClient.embed("query")).thenReturn(embedding);
 
@@ -54,18 +52,14 @@ class SemanticSearchServiceTest {
                         new Document()
                 );
 
-        // first users aggregation
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("users"), eq(Document.class)))
                 .thenReturn(userAggResult);
 
-        // products aggregation (called twice internally)
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("products"), eq(Document.class)))
                 .thenReturn(productAggResult);
 
-        // ---- when ----
         List<Document> result = service.search("query", "Delhi");
 
-        // ---- then ----
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("p1", result.get(0).get("_id"));
@@ -77,7 +71,7 @@ class SemanticSearchServiceTest {
 
     @Test
     void search_shouldReturnProducts_whenNoUsersFound() {
-        // ---- given ----
+
         when(embeddingClient.embed(anyString()))
                 .thenReturn(List.of(0.1, 0.2));
 
@@ -96,10 +90,8 @@ class SemanticSearchServiceTest {
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("products"), eq(Document.class)))
                 .thenReturn(products);
 
-        // ---- when ----
         List<Document> result = service.search("query", null);
 
-        // ---- then ----
         assertEquals(1, result.size());
         assertEquals("p2", result.get(0).get("_id"));
     }
